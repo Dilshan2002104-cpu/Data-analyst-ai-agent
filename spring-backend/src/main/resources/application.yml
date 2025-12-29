@@ -1,0 +1,32 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: data-analyst-ai-agent
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 50MB
+      max-request-size: 50MB
+  
+firebase:
+  credentials-path: ${FIREBASE_CREDENTIALS_PATH:../credentials/firebase-admin-key.json}
+  project-id: ${GCP_PROJECT_ID:data-analyst-ai-agent-c0808}
+  storage-bucket: ${FIREBASE_STORAGE_BUCKET:data-analyst-ai-agent-c0808.appspot.com}
+
+python:
+  service:
+    url: ${PYTHON_SERVICE_URL:http://localhost:5000}
+    timeout: 60000
+
+cors:
+  allowed-origins: ${CORS_ORIGINS:http://localhost:5173,http://localhost:3000}
+  allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+  allowed-headers: "*"
+  allow-credentials: true
+
+logging:
+  level:
+    com.dataanalyst: DEBUG
+    com.google.firebase: INFO
