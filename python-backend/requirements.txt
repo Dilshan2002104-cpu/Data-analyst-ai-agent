@@ -1,0 +1,25 @@
+# Python AI Service Dependencies
+# Python 3.11+ recommended
+
+# Web Framework
+flask>=3.0.0
+flask-cors>=4.0.0
+
+# Google Cloud & Vertex AI
+google-cloud-aiplatform>=1.38.0
+google-cloud-storage>=2.14.0
+
+# Vector Database
+chromadb>=0.4.22
+
+# Data Processing - use latest versions with pre-built wheels
+numpy>=1.26.0
+pandas>=2.1.0
+openpyxl>=3.1.0
+
+# Utilities
+python-dotenv>=1.0.0
+requests>=2.31.0
+
+# Production Server
+gunicorn>=21.2.0
