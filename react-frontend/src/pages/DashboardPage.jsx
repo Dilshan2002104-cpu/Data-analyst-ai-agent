@@ -11,6 +11,13 @@ const DashboardPage = () => {
 
     useEffect(() => {
         fetchDatasets();
+
+        // Poll for updates every 5 seconds (to check for processing completion)
+        const intervalId = setInterval(() => {
+            fetchDatasets();
+        }, 5000);
+
+        return () => clearInterval(intervalId);
     }, [fetchDatasets]);
 
     return (

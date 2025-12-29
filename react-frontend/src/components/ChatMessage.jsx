@@ -1,4 +1,7 @@
 import { User, Bot } from 'lucide-react';
+import ChartRenderer from './ChartRenderer';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const ChatMessage = ({ message }) => {
     const formatTime = (timestamp) => {
@@ -7,6 +10,54 @@ const ChatMessage = ({ message }) => {
             minute: '2-digit',
         });
     };
+
+    const parseResponse = (response) => {
+        if (!response) return { text: '', chartConfig: null };
+
+        let chartConfig = null;
+        let text = response;
+
+        // 1. Try to find Markdown Code Block
+        const jsonBlockRegex = /```json\s*([\s\S]*?)\s*```/;
+        const match = response.match(jsonBlockRegex);
+
+        if (match) {
+            try {
+                chartConfig = JSON.parse(match[1]);
+                text = response.replace(match[0], '').trim();
+                return { text, chartConfig };
+            } catch (e) {
+                console.error("Failed to parse code block JSON", e);
+            }
+        }
+
+        // 2. Fallback: Look for raw JSON object at the end of the string
+        // We look for a pattern starting with { and containing "type" and "data"
+        try {
+            const lastOpenBrace = response.lastIndexOf('{');
+            if (lastOpenBrace !== -1) {
+                const potentialJson = response.substring(lastOpenBrace);
+                // Basic check to see if it looks like our chart config before try-parsing
+                if (potentialJson.includes('"type"') && potentialJson.includes('"data"')) {
+                    const parsed = JSON.parse(potentialJson);
+                    if (parsed.type && parsed.data) {
+                        chartConfig = parsed;
+                        text = response.substring(0, lastOpenBrace).trim();
+                    }
+                }
+            }
+        } catch (e) {
+            // Check for common issue: Trailing text after JSON
+            // Sometimes AI adds "Hope this helps!" after the JSON
+            // We can try to find the last closing brace '}' that matches the last opening brace '{'
+            // But for now, let's assume the JSON is at the end or near the end.
+            console.log("Fallback JSON parse failed", e);
+        }
+
+        return { text, chartConfig };
+    };
+
+    const { text, chartConfig } = parseResponse(message.aiResponse);
 
     return (
         <div className="space-y-4">
@@ -41,7 +92,18 @@ const ChatMessage = ({ message }) => {
                         )}
                     </div>
                     <div className="bg-gray-50 rounded-lg p-3">
-                        <p className="text-gray-900 whitespace-pre-wrap">{message.aiResponse}</p>
+                        <div className="prose prose-sm max-w-none text-gray-900">
+                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                {text}
+                            </ReactMarkdown>
+                        </div>
+
+                        {/* Render Chart if config exists */}
+                        {chartConfig && (
+                            <div className="mt-4">
+                                <ChartRenderer config={chartConfig} />
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

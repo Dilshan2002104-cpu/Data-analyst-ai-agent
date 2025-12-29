@@ -91,7 +91,26 @@ Context:
 
 Question: {prompt}
 
-Provide a clear, concise, and accurate answer based on the context provided. If you can't answer based on the context, say so."""
+Provide a clear, concise, and accurate answer based on the context provided.
+
+IMPORTANT: If the user asks for a chart, graph, or visualization, OR if the answer involves comparing categories or trends, YOU MUST INCLUDE A JSON OBJECT at the very end of your response inside a ```json``` code block.
+
+The JSON format must be compatible with Recharts and follow this structure:
+```json
+{{
+  "type": "bar", // options: "bar", "line", "pie", "area"
+  "title": "Chart Title",
+  "data": [
+    {{ "name": "Category A", "value": 10 }},
+    {{ "name": "Category B", "value": 20 }}
+  ],
+  "xAxisKey": "name", // Valid key from data object for X-axis
+  "yAxisKey": "value", // Valid key from data object for Y-axis (values)
+  "colors": ["#8884d8", "#82ca9d", "#ffc658"] // Optional custom colors
+}}
+```
+
+If no chart is needed, do NOT include any JSON."""
             else:
                 full_prompt = prompt
             
@@ -133,9 +152,25 @@ Provide a detailed analysis with:
 1. Direct answer to the question
 2. Key insights from the data
 3. Any relevant statistics or patterns
-4. Recommendations if applicable
 
-Be specific and use numbers from the data when possible."""
+IMPORTANT: If the user asks for a chart, graph, or visualization, OR if the answer involves comparing categories or trends, YOU MUST INCLUDE A JSON OBJECT at the very end of your response inside a ```json``` code block.
+
+The JSON format must be compatible with Recharts and follow this structure:
+```json
+{
+  "type": "bar", // options: "bar", "line", "pie", "area"
+  "title": "Chart Title",
+  "data": [
+    { "name": "Category A", "value": 10 },
+    { "name": "Category B", "value": 20 }
+  ],
+  "xAxisKey": "name", // Valid key from data object for X-axis
+  "yAxisKey": "value", // Valid key from data object for Y-axis (values)
+  "colors": ["#8884d8", "#82ca9d", "#ffc658"] // Optional custom colors
+}
+```
+
+If no chart is needed, do NOT include any JSON."""
 
             return self.generate_response(prompt)
             
