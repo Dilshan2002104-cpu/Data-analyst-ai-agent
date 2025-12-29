@@ -119,7 +119,7 @@ VITE_FIREBASE_PROJECT_ID=data-analyst-ai-agent-c0808
 VITE_FIREBASE_STORAGE_BUCKET=data-analyst-ai-agent-c0808.appspot.com
 VITE_FIREBASE_MESSAGING_SENDER_ID=your-sender-id
 VITE_FIREBASE_APP_ID=your-app-id
-VITE_API_URL=http://localhost:8080
+VITE_API_BASE_URL=http://localhost:8080
 EOF
 
 # Run the application

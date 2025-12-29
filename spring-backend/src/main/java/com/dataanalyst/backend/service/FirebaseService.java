@@ -127,7 +127,6 @@ public class FirebaseService {
 
         QuerySnapshot querySnapshot = firestore.collection(DATASETS_COLLECTION)
                 .whereEqualTo("userId", userId)
-                .orderBy("uploadedAt", Query.Direction.DESCENDING)
                 .get()
                 .get();
 
@@ -135,6 +134,9 @@ public class FirebaseService {
         for (DocumentSnapshot document : querySnapshot.getDocuments()) {
             datasets.add(documentToDataset(document));
         }
+
+        // Sort in memory to avoid Firestore index requirement
+        datasets.sort((d1, d2) -> d2.getUploadedAt().compareTo(d1.getUploadedAt()));
 
         logger.info("Found {} datasets for user: {}", datasets.size(), userId);
         return datasets;
@@ -194,7 +196,6 @@ public class FirebaseService {
 
         QuerySnapshot querySnapshot = firestore.collection(CHAT_MESSAGES_COLLECTION)
                 .whereEqualTo("datasetId", datasetId)
-                .orderBy("timestamp", Query.Direction.ASCENDING)
                 .get()
                 .get();
 
@@ -202,6 +203,9 @@ public class FirebaseService {
         for (DocumentSnapshot document : querySnapshot.getDocuments()) {
             messages.add(documentToChatMessage(document));
         }
+
+        // Sort in memory to avoid Firestore index requirement
+        messages.sort((m1, m2) -> m1.getTimestamp().compareTo(m2.getTimestamp()));
 
         logger.info("Found {} messages for dataset: {}", messages.size(), datasetId);
         return messages;
