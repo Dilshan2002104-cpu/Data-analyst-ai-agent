@@ -70,14 +70,15 @@ const DatabaseConnectionPage = () => {
             const userId = localStorage.getItem('userId') || 'default_user';
             const connectionId = `conn_${Date.now()}`;
 
-            const response = await fetch('http://localhost:5000/api/sql/connect', {
+            // Save to Persistence Layer (Spring Backend -> Firestore)
+            const response = await fetch('http://localhost:8080/api/connections', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
+                    id: connectionId,
                     userId,
-                    connectionId,
                     name: formData.name,
-                    dbType: formData.dbType,
+                    type: formData.dbType, // 'type' in model, 'dbType' in form
                     host: formData.host,
                     port: parseInt(formData.port),
                     database: formData.database,
@@ -88,11 +89,11 @@ const DatabaseConnectionPage = () => {
 
             const data = await response.json();
 
-            if (data.success) {
+            if (response.ok && data.id) {
                 toast.success('Database connection saved!');
                 navigate('/unified-chat');
             } else {
-                toast.error(data.message || 'Failed to save connection');
+                toast.error('Failed to save connection');
             }
         } catch (error) {
             toast.error('Error saving connection: ' + error.message);

@@ -15,10 +15,33 @@ const UnifiedChatPage = () => {
 
     const userId = localStorage.getItem('userId') || 'default_user';
 
-    // Load user's data sources
+    // Load user's data sources and chat history
     useEffect(() => {
         loadSources();
+        loadChatHistory();
     }, []);
+
+    const loadChatHistory = async () => {
+        try {
+            const response = await fetch(`http://localhost:8080/api/chat/unified`);
+            if (response.ok) {
+                const history = await response.json();
+                // Convert to UI format
+                const uiMessages = history.flatMap(msg => [
+                    { type: 'user', content: msg.userMessage, timestamp: new Date(msg.timestamp) },
+                    {
+                        type: 'ai',
+                        content: msg.aiResponse,
+                        timestamp: new Date(msg.timestamp), // Use same timestamp for pair
+                        // Note: sourcesUsed and rowCount might need to be added to ChatMessage model if needed
+                    }
+                ]);
+                setMessages(uiMessages);
+            }
+        } catch (error) {
+            console.error('Error loading chat history:', error);
+        }
+    };
 
     const loadSources = async () => {
         try {
@@ -68,13 +91,33 @@ const UnifiedChatPage = () => {
 
             if (data.success) {
                 // Add AI response to chat
-                setMessages(prev => [...prev, {
+                const aiMessage = {
                     type: 'ai',
                     content: data.answer,
                     sourcesUsed: data.sourcesUsed,
                     rowCount: data.rowCount,
                     timestamp: new Date()
-                }]);
+                };
+                setMessages(prev => [...prev, aiMessage]);
+
+                // Save to Spring Backend
+                try {
+                    await fetch('http://localhost:8080/api/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            datasetId: 'unified',
+                            userId: userId,
+                            userMessage: userMessage,
+                            aiResponse: data.answer,
+                            timestamp: new Date().toISOString(),
+                            responseTimeMs: 0 // Optional
+                        })
+                    });
+                } catch (err) {
+                    console.error('Failed to save chat history:', err);
+                }
+
             } else {
                 console.error('Query failed:', data.message);
                 toast.error(data.message || 'Query failed');

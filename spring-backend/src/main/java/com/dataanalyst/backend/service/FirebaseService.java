@@ -2,6 +2,7 @@ package com.dataanalyst.backend.service;
 
 import com.dataanalyst.backend.model.ChatMessage;
 import com.dataanalyst.backend.model.Dataset;
+import com.dataanalyst.backend.model.SQLConnection;
 import com.dataanalyst.backend.model.User;
 import com.google.cloud.firestore.*;
 import org.slf4j.Logger;
@@ -25,6 +26,7 @@ public class FirebaseService {
     private static final String USERS_COLLECTION = "users";
     private static final String DATASETS_COLLECTION = "datasets";
     private static final String CHAT_MESSAGES_COLLECTION = "chatMessages";
+    private static final String SQL_CONNECTIONS_COLLECTION = "sqlConnections";
 
     public FirebaseService(Firestore firestore) {
         this.firestore = firestore;
@@ -168,6 +170,60 @@ public class FirebaseService {
         logger.info("Dataset deleted successfully: {}", datasetId);
     }
 
+    // ============ SQL Connection Operations ============
+
+    public SQLConnection saveConnection(SQLConnection connection) throws ExecutionException, InterruptedException {
+        logger.info("Saving SQL connection: {}", connection.getName());
+
+        Map<String, Object> connData = new HashMap<>();
+        connData.put("id", connection.getId());
+        connData.put("userId", connection.getUserId());
+        connData.put("name", connection.getName());
+        connData.put("type", connection.getType());
+        connData.put("host", connection.getHost());
+        connData.put("port", connection.getPort());
+        connData.put("database", connection.getDatabase());
+        connData.put("username", connection.getUsername());
+        connData.put("password", connection.getPassword());
+        connData.put("createdAt", connection.getCreatedAt());
+
+        firestore.collection(SQL_CONNECTIONS_COLLECTION)
+                .document(connection.getId())
+                .set(connData)
+                .get();
+
+        logger.info("SQL connection saved successfully: {}", connection.getId());
+        return connection;
+    }
+
+    public List<SQLConnection> getUserConnections(String userId) throws ExecutionException, InterruptedException {
+        logger.info("Fetching SQL connections for user: {}", userId);
+
+        QuerySnapshot querySnapshot = firestore.collection(SQL_CONNECTIONS_COLLECTION)
+                .whereEqualTo("userId", userId)
+                .get()
+                .get();
+
+        List<SQLConnection> connections = new ArrayList<>();
+        for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+            connections.add(documentToSQLConnection(document));
+        }
+
+        logger.info("Found {} connections for user: {}", connections.size(), userId);
+        return connections;
+    }
+
+    public void deleteConnection(String connectionId) throws ExecutionException, InterruptedException {
+        logger.info("Deleting SQL connection: {}", connectionId);
+
+        firestore.collection(SQL_CONNECTIONS_COLLECTION)
+                .document(connectionId)
+                .delete()
+                .get();
+
+        logger.info("Connection deleted: {}", connectionId);
+    }
+
     // ============ Chat Message Operations ============
 
     public ChatMessage saveChatMessage(ChatMessage message) throws ExecutionException, InterruptedException {
@@ -255,6 +311,23 @@ public class FirebaseService {
                 .aiResponse(document.getString("aiResponse"))
                 .timestamp(Instant.parse(document.getString("timestamp")))
                 .responseTimeMs(responseTimeMs != null ? responseTimeMs : 0L)
+                .build();
+    }
+
+    private SQLConnection documentToSQLConnection(DocumentSnapshot document) {
+        Long port = document.getLong("port");
+
+        return SQLConnection.builder()
+                .id(document.getString("id"))
+                .userId(document.getString("userId"))
+                .name(document.getString("name"))
+                .type(document.getString("type"))
+                .host(document.getString("host"))
+                .port(port != null ? port.intValue() : 3306)
+                .database(document.getString("database"))
+                .username(document.getString("username"))
+                .password(document.getString("password"))
+                .createdAt(document.getString("createdAt"))
                 .build();
     }
 }

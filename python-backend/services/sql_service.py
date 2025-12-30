@@ -113,7 +113,25 @@ class SQLService:
         """
         try:
             if connection_id not in self.connections:
-                raise ValueError(f"Connection not found: {connection_id}")
+                # Try to recover from Firestore
+                from services.firestore_service import firestore_service
+                
+                logger.info(f"Connection {connection_id} not found in memory (get_schema), attempting recovery from Firestore...")
+                conn_data = firestore_service.get_connection(connection_id)
+                
+                if conn_data:
+                    logger.info("Connection found in Firestore, restoring...")
+                    self.create_connection(
+                        conn_data['id'],
+                        conn_data['type'],
+                        conn_data['host'],
+                        conn_data['port'],
+                        conn_data['database'],
+                        conn_data['username'],
+                        conn_data['password']
+                    )
+                else:
+                    raise ValueError(f"Connection not found: {connection_id}")
             
             engine = self.connections[connection_id]['engine']
             inspector = inspect(engine)
@@ -159,6 +177,12 @@ class SQLService:
         
         return {'valid': True, 'message': 'Query is valid'}
     
+    def get_db_type(self, connection_id):
+        """Get database type for a connection"""
+        if connection_id in self.connections:
+            return self.connections[connection_id]['db_type']
+        return 'mysql' # Default
+
     def execute_query(self, connection_id, sql, limit=1000):
         """
         Execute SQL query and return results as DataFrame
@@ -178,9 +202,29 @@ class SQLService:
                 raise ValueError(validation['message'])
             
             if connection_id not in self.connections:
-                raise ValueError(f"Connection not found: {connection_id}")
+                # Try to recover from Firestore
+                from services.firestore_service import firestore_service
+                
+                logger.info(f"Connection {connection_id} not found in memory, attempting recovery from Firestore...")
+                conn_data = firestore_service.get_connection(connection_id)
+                
+                if conn_data:
+                    logger.info("Connection found in Firestore, restoring...")
+                    self.create_connection(
+                        conn_data['id'],
+                        conn_data['type'],
+                        conn_data['host'],
+                        conn_data['port'],
+                        conn_data['database'],
+                        conn_data['username'],
+                        conn_data['password']
+                    )
+                else:
+                    raise ValueError(f"Connection not found: {connection_id}")
             
-            engine = self.connections[connection_id]['engine']
+            conn_info = self.connections[connection_id]
+            engine = conn_info['engine']
+            db_type = conn_info.get('db_type', 'mysql')
             
             # Add LIMIT if not present
             if 'LIMIT' not in sql.upper():
@@ -189,6 +233,15 @@ class SQLService:
             logger.info(f"Executing query on {connection_id}: {sql[:100]}...")
             
             # Execute query
+            # For MySQL, we need to handle % characters if they exist (used in DATE_FORMAT)
+            # SQLAlchemy/Pandas might treat them as parameter placeholders
+            if db_type == 'mysql' and '%' in sql:
+                # If we are not using parameters, we should double escape % to %%
+                # But pandas read_sql might not need this if not passing params?
+                # Actually, the error 'unsupported format character' suggests it DOES try to format.
+                # So we escape % -> %%
+                sql = sql.replace('%', '%%')
+
             df = pd.read_sql(sql, engine)
             
             logger.info(f"Query executed successfully. Rows returned: {len(df)}")

@@ -80,14 +80,13 @@ const ChartRenderer = ({ config }) => {
     };
 
     return (
-        <div
-            className="w-full h-80 bg-white p-4 rounded-lg border border-gray-200 mt-4 shadow-sm"
-            style={{ width: '100%', height: 320, minWidth: 0 }}
-        >
+        <div className="w-full h-80 bg-white p-4 rounded-lg border border-gray-200 mt-4 shadow-sm min-h-[320px]">
             {title && <h3 className="text-center font-semibold text-gray-700 mb-4">{title}</h3>}
-            <ResponsiveContainer width="100%" height="100%">
-                {renderChart()}
-            </ResponsiveContainer>
+            <div style={{ width: '100%', height: '100%', minHeight: '250px' }}>
+                <ResponsiveContainer width="100%" height="100%">
+                    {renderChart()}
+                </ResponsiveContainer>
+            </div>
         </div>
     );
 };

@@ -55,8 +55,13 @@ class SQLAgent:
             # Format schema for prompt
             schema_text = self._format_schema_for_prompt(schema)
             
+            # Get database type
+            db_type = self.sql_service.get_db_type(connection_id)
+            
             # Create prompt for SQL generation
             prompt = f"""You are a SQL expert. Generate a SQL query based on the user's question.
+            
+Target Database: {db_type.upper()}
 
 Database Schema:
 {schema_text}
@@ -64,11 +69,12 @@ Database Schema:
 User Question: {question}
 
 IMPORTANT RULES:
-1. Generate ONLY a SELECT query (no INSERT, UPDATE, DELETE, DROP)
+1. Generate ONLY a SELECT query
 2. Use proper JOINs when needed
 3. Include appropriate WHERE clauses
 4. Add LIMIT clause if not specified (default LIMIT 100)
 5. Return ONLY the SQL query, no explanations or markdown
+6. Use syntax specific to {db_type} (e.g. for dates: use DATE_FORMAT for MySQL, TO_CHAR for PostgreSQL)
 
 SQL Query:"""
 
@@ -161,7 +167,8 @@ SQL Query:"""
             
             # Limit data for prompt (first 10 rows)
             sample_data = data[:10]
-            data_text = json.dumps(sample_data, indent=2)
+            # Use default=str to handle date/datetime objects that aren't serializable
+            data_text = json.dumps(sample_data, indent=2, default=str)
             
             prompt = f"""You are a data analyst. Analyze the following query results and provide insights.
 

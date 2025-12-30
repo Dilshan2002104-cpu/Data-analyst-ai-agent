@@ -101,17 +101,26 @@ class ContextManager:
             }
         """
         try:
-            if user_id not in self.user_contexts:
-                return {
-                    'csvFiles': [],
-                    'sqlDatabases': []
-                }
+            # Fetch from Firestore (Source of Truth)
+            from services.firestore_service import firestore_service
             
-            return self.user_contexts[user_id]
+            context = firestore_service.get_user_context(user_id)
+            
+            # Update memory cache (optional, but good for debugging)
+            if user_id not in self.user_contexts:
+                self.user_contexts[user_id] = {'csvFiles': [], 'sqlDatabases': []}
+            
+            self.user_contexts[user_id] = context
+            
+            return context
             
         except Exception as e:
             logger.error(f"Error getting user context: {str(e)}")
-            raise
+            # Fallback to memory if Firestore fails
+            return self.user_contexts.get(user_id, {
+                'csvFiles': [],
+                'sqlDatabases': []
+            })
     
     def remove_csv_file(self, user_id, dataset_id):
         """Remove a CSV file from user's context"""
