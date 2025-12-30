@@ -7,7 +7,10 @@ import {
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 
 const ChartRenderer = ({ config }) => {
-    if (!config || !config.data || !config.type) return null;
+    if (!config || !config.data || !Array.isArray(config.data) || !config.type) {
+        console.warn('Invalid chart config or data is not an array:', config);
+        return null;
+    }
 
     const { type, data, xAxisKey, yAxisKey, title, colors = COLORS } = config;
 

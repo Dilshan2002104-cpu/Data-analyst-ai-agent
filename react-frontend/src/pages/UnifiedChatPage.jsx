@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Database, FileText, Send } from 'lucide-react';
+import { Database, FileText, Send, MessageSquare } from 'lucide-react';
 import ChatMessage from '../components/ChatMessage';
+import Navbar from '../components/Navbar';
 import toast from 'react-hot-toast';
 
 const UnifiedChatPage = () => {
@@ -108,202 +109,214 @@ const UnifiedChatPage = () => {
     const totalSources = sources.csvFiles.length + sources.sqlDatabases.length;
 
     return (
-        <div className="flex h-screen bg-gray-50">
-            {/* Sidebar - Data Sources */}
-            <div className="w-64 bg-white border-r border-gray-200 flex flex-col">
-                <div className="p-4 border-b border-gray-200">
-                    <h2 className="text-lg font-semibold text-gray-900">My Data Sources</h2>
-                    <p className="text-sm text-gray-500 mt-1">{totalSources} sources</p>
-                </div>
+        <div className="h-screen flex flex-col bg-gradient-to-br from-slate-50 to-blue-50">
+            <Navbar />
+            <div className="flex flex-1 overflow-hidden">
+                {/* Sidebar - Data Sources */}
+                <div className="w-72 bg-white border-r border-gray-200 flex flex-col shadow-sm">
+                    <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50/50 to-indigo-50/30">
+                        <h2 className="text-xl font-bold text-gray-900">Data Sources</h2>
+                        <p className="text-sm text-gray-600 mt-1 font-medium">{totalSources} connected</p>
+                    </div>
 
-                <div className="flex-1 overflow-y-auto p-4">
-                    {loadingSources ? (
-                        <p className="text-sm text-gray-500">Loading...</p>
-                    ) : (
-                        <>
-                            {/* CSV Files */}
-                            {sources.csvFiles.length > 0 && (
-                                <div className="mb-6">
-                                    <h3 className="text-xs font-semibold text-gray-500 uppercase mb-2">
-                                        CSV Files
-                                    </h3>
-                                    <div className="space-y-2">
-                                        {sources.csvFiles.map((file) => (
-                                            <div
-                                                key={file.id}
-                                                className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-50"
-                                            >
-                                                <FileText className="w-4 h-4 text-blue-600" />
-                                                <span className="text-sm text-gray-700 truncate">
-                                                    {file.name}
-                                                </span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* SQL Databases */}
-                            {sources.sqlDatabases.length > 0 && (
-                                <div>
-                                    <h3 className="text-xs font-semibold text-gray-500 uppercase mb-2">
-                                        Databases
-                                    </h3>
-                                    <div className="space-y-2">
-                                        {sources.sqlDatabases.map((db) => (
-                                            <div
-                                                key={db.id}
-                                                className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-50"
-                                            >
-                                                <Database className="w-4 h-4 text-green-600" />
-                                                <div className="flex-1 min-w-0">
-                                                    <p className="text-sm text-gray-700 truncate">{db.name}</p>
-                                                    <p className="text-xs text-gray-500">{db.type}</p>
+                    <div className="flex-1 overflow-y-auto p-4">
+                        {loadingSources ? (
+                            <div className="flex justify-center py-8">
+                                <div className="w-6 h-6 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+                            </div>
+                        ) : (
+                            <>
+                                {/* CSV Files */}
+                                {sources.csvFiles.length > 0 && (
+                                    <div className="mb-6">
+                                        <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 px-2">
+                                            CSV Files
+                                        </h3>
+                                        <div className="space-y-2">
+                                            {sources.csvFiles.map((file) => (
+                                                <div
+                                                    key={file.id}
+                                                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 border border-transparent hover:border-blue-200 transition-all duration-200 cursor-pointer group"
+                                                >
+                                                    <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                                                        <FileText className="w-4 h-4 text-blue-600" />
+                                                    </div>
+                                                    <span className="text-sm text-gray-700 truncate font-medium group-hover:text-blue-700 transition-colors">
+                                                        {file.name}
+                                                    </span>
                                                 </div>
-                                            </div>
-                                        ))}
+                                            ))}
+                                        </div>
                                     </div>
+                                )}
+
+                                {/* SQL Databases */}
+                                {sources.sqlDatabases.length > 0 && (
+                                    <div>
+                                        <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 px-2">
+                                            Databases
+                                        </h3>
+                                        <div className="space-y-2">
+                                            {sources.sqlDatabases.map((db) => (
+                                                <div
+                                                    key={db.id}
+                                                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-emerald-50 border border-transparent hover:border-emerald-200 transition-all duration-200 cursor-pointer group"
+                                                >
+                                                    <div className="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center group-hover:bg-emerald-200 transition-colors">
+                                                        <Database className="w-4 h-4 text-emerald-600" />
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="text-sm text-gray-700 truncate font-medium group-hover:text-emerald-700 transition-colors">{db.name}</p>
+                                                        <p className="text-xs text-gray-500 capitalize">{db.type}</p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Empty State */}
+                                {totalSources === 0 && (
+                                    <div className="text-center py-8">
+                                        <p className="text-sm text-gray-500 mb-4">
+                                            No data sources yet
+                                        </p>
+                                        <button
+                                            onClick={() => navigate('/dashboard')}
+                                            className="text-sm text-blue-600 hover:text-blue-700"
+                                        >
+                                            Upload CSV
+                                        </button>
+                                        <span className="text-sm text-gray-400 mx-2">or</span>
+                                        <button
+                                            onClick={() => navigate('/connect-database')}
+                                            className="text-sm text-blue-600 hover:text-blue-700"
+                                        >
+                                            Connect Database
+                                        </button>
+                                    </div>
+                                )}
+                            </>
+                        )}
+                    </div>
+
+                    {/* Add Data Button */}
+                    <div className="p-4 border-t border-gray-200 bg-gray-50">
+                        <button
+                            onClick={() => navigate('/dashboard')}
+                            className="w-full px-4 py-2.5 text-sm font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 shadow-sm hover:shadow-md transition-all duration-200"
+                        >
+                            + Add Data Source
+                        </button>
+                    </div>
+                </div>
+
+                {/* Main Chat Area */}
+                <div className="flex-1 flex flex-col bg-white">
+                    {/* Messages */}
+                    <div className="flex-1 overflow-y-auto p-8 space-y-6 bg-gradient-to-br from-blue-50/30 to-indigo-50/40">
+                        {messages.length === 0 ? (
+                            <div className="text-center py-16 max-w-2xl mx-auto">
+                                <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-lg">
+                                    <MessageSquare className="w-10 h-10 text-white" />
                                 </div>
-                            )}
-
-                            {/* Empty State */}
-                            {totalSources === 0 && (
-                                <div className="text-center py-8">
-                                    <p className="text-sm text-gray-500 mb-4">
-                                        No data sources yet
-                                    </p>
-                                    <button
-                                        onClick={() => navigate('/dashboard')}
-                                        className="text-sm text-blue-600 hover:text-blue-700"
-                                    >
-                                        Upload CSV
-                                    </button>
-                                    <span className="text-sm text-gray-400 mx-2">or</span>
-                                    <button
-                                        onClick={() => navigate('/connect-database')}
-                                        className="text-sm text-blue-600 hover:text-blue-700"
-                                    >
-                                        Connect Database
-                                    </button>
-                                </div>
-                            )}
-                        </>
-                    )}
-                </div>
-
-                {/* Add Data Button */}
-                <div className="p-4 border-t border-gray-200">
-                    <button
-                        onClick={() => navigate('/dashboard')}
-                        className="w-full px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                    >
-                        + Add Data Source
-                    </button>
-                </div>
-            </div>
-
-            {/* Main Chat Area */}
-            <div className="flex-1 flex flex-col">
-                {/* Header */}
-                <div className="bg-white border-b border-gray-200 px-6 py-4">
-                    <h1 className="text-xl font-semibold text-gray-900">Unified Chat</h1>
-                    <p className="text-sm text-gray-500">
-                        Ask questions about any of your data sources
-                    </p>
-                </div>
-
-                {/* Messages */}
-                <div className="flex-1 overflow-y-auto p-6 space-y-4">
-                    {messages.length === 0 ? (
-                        <div className="text-center py-12">
-                            <h2 className="text-lg font-semibold text-gray-700 mb-2">
-                                Welcome to Unified Chat!
-                            </h2>
-                            <p className="text-gray-500 mb-6">
-                                Ask questions about your CSV files and databases in one place
-                            </p>
-                            <div className="max-w-md mx-auto space-y-2 text-left">
-                                <p className="text-sm text-gray-600">Try asking:</p>
-                                <div className="space-y-1">
+                                <h2 className="text-3xl font-bold text-gray-900 mb-3">
+                                    How can I help?
+                                </h2>
+                                <p className="text-gray-600 mb-10 text-lg">
+                                    Ask questions about your CSV files and databases
+                                </p>
+                                <div className="grid grid-cols-1 gap-3 text-left">
                                     <button
                                         onClick={() => setInput("What's the total revenue in sales.csv?")}
-                                        className="block w-full text-left px-3 py-2 text-sm bg-gray-50 hover:bg-gray-100 rounded-md"
+                                        className="group px-5 py-4 bg-white border border-gray-200 hover:border-blue-300 hover:shadow-md rounded-xl transition-all duration-200 hover:-translate-y-0.5 text-left"
                                     >
-                                        "What's the total revenue in sales.csv?"
+                                        <span className="text-sm font-medium text-gray-700 group-hover:text-blue-700 transition-colors">💰 What's the total revenue in sales.csv?</span>
                                     </button>
                                     <button
                                         onClick={() => setInput("Show top 10 customers from the database")}
-                                        className="block w-full text-left px-3 py-2 text-sm bg-gray-50 hover:bg-gray-100 rounded-md"
+                                        className="group px-5 py-4 bg-white border border-gray-200 hover:border-emerald-300 hover:shadow-md rounded-xl transition-all duration-200 hover:-translate-y-0.5 text-left"
                                     >
-                                        "Show top 10 customers from the database"
+                                        <span className="text-sm font-medium text-gray-700 group-hover:text-emerald-700 transition-colors">👥 Show top 10 customers from the database</span>
                                     </button>
                                     <button
                                         onClick={() => setInput("Compare CSV data with database")}
-                                        className="block w-full text-left px-3 py-2 text-sm bg-gray-50 hover:bg-gray-100 rounded-md"
+                                        className="group px-5 py-4 bg-white border border-gray-200 hover:border-purple-300 hover:shadow-md rounded-xl transition-all duration-200 hover:-translate-y-0.5 text-left"
                                     >
-                                        "Compare CSV data with database"
+                                        <span className="text-sm font-medium text-gray-700 group-hover:text-purple-700 transition-colors">📊 Compare CSV data with database</span>
                                     </button>
                                 </div>
                             </div>
-                        </div>
-                    ) : (
-                        messages.map((message, index) => (
-                            <div key={index}>
-                                {message.type === 'user' ? (
-                                    <div className="flex justify-end">
-                                        <div className="bg-blue-600 text-white rounded-lg px-4 py-2 max-w-2xl">
-                                            {message.content}
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className="flex flex-col gap-2">
-                                        <ChatMessage
-                                            message={{
-                                                userMessage: messages[index - 1]?.content || '',
-                                                aiResponse: message.content
-                                            }}
-                                        />
-                                        {message.sourcesUsed && (
-                                            <div className="text-xs text-gray-500 ml-12">
-                                                Sources: {message.sourcesUsed.join(', ')} • {message.rowCount} rows
+                        ) : (
+                            messages.map((message, index) => {
+                                // Skip rendering independent user message if it's followed by an AI message
+                                if (message.type === 'user' && index < messages.length - 1 && messages[index + 1].type === 'ai') {
+                                    return null;
+                                }
+
+                                return (
+                                    <div key={index}>
+                                        {message.type === 'user' ? (
+                                            <div className="flex justify-end">
+                                                <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl rounded-br-sm px-5 py-3 max-w-2xl shadow-md">
+                                                    <p className="text-sm font-medium">{message.content}</p>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="flex flex-col gap-2">
+                                                <ChatMessage
+                                                    message={{
+                                                        userMessage: messages[index - 1]?.content || '',
+                                                        aiResponse: message.content,
+                                                        timestamp: messages[index - 1]?.timestamp || new Date(),
+                                                        responseTimeMs: message.timestamp ? (new Date() - new Date(messages[index - 1]?.timestamp)) : null
+                                                    }}
+                                                />
+                                                {message.sourcesUsed && (
+                                                    <div className="flex items-center gap-2 text-xs text-gray-500 ml-12">
+                                                        <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">{message.sourcesUsed.join(', ')}</span>
+                                                        <span>•</span>
+                                                        <span>{message.rowCount} rows</span>
+                                                    </div>
+                                                )}
                                             </div>
                                         )}
                                     </div>
-                                )}
+                                );
+                            })
+                        )}
+
+                        {loading && (
+                            <div className="flex items-center gap-2 text-gray-500">
+                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                                <span className="ml-2">Analyzing...</span>
                             </div>
-                        ))
-                    )}
+                        )}
+                    </div>
 
-                    {loading && (
-                        <div className="flex items-center gap-2 text-gray-500">
-                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                            <span className="ml-2">Analyzing...</span>
+                    {/* Input Area */}
+                    <div className="bg-white border-t border-gray-200 p-6 shadow-lg">
+                        <div className="max-w-4xl mx-auto flex gap-3">
+                            <input
+                                type="text"
+                                value={input}
+                                onChange={(e) => setInput(e.target.value)}
+                                onKeyPress={handleKeyPress}
+                                placeholder="Ask a question about your data..."
+                                disabled={loading || totalSources === 0}
+                                className="flex-1 px-5 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 disabled:bg-gray-100 text-sm transition-all"
+                            />
+                            <button
+                                onClick={handleSend}
+                                disabled={loading || !input.trim() || totalSources === 0}
+                                className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-200 font-semibold"
+                            >
+                                <Send className="w-4 h-4" />
+                                Send
+                            </button>
                         </div>
-                    )}
-                </div>
-
-                {/* Input Area */}
-                <div className="bg-white border-t border-gray-200 p-4">
-                    <div className="flex gap-2">
-                        <input
-                            type="text"
-                            value={input}
-                            onChange={(e) => setInput(e.target.value)}
-                            onKeyPress={handleKeyPress}
-                            placeholder="Ask a question about your data..."
-                            disabled={loading || totalSources === 0}
-                            className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
-                        />
-                        <button
-                            onClick={handleSend}
-                            disabled={loading || !input.trim() || totalSources === 0}
-                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                        >
-                            <Send className="w-4 h-4" />
-                            Send
-                        </button>
                     </div>
                 </div>
             </div>
@@ -312,3 +325,4 @@ const UnifiedChatPage = () => {
 };
 
 export default UnifiedChatPage;
+

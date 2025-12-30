@@ -3,7 +3,7 @@ SQL routes for database connection and querying
 """
 
 from flask import Blueprint, request, jsonify
-from services import SQLService, context_manager
+from services import context_manager, sql_service
 import logging
 
 logger = logging.getLogger(__name__)
@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 sql_bp = Blueprint('sql', __name__)
 
 # Initialize SQL service
-sql_service = SQLService()
+# sql_service = SQLService() # Removed, using imported instance
 
 
 @sql_bp.route('/api/sql/connect', methods=['POST'])

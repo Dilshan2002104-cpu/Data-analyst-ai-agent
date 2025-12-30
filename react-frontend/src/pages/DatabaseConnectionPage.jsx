@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../components/Navbar';
 import toast from 'react-hot-toast';
 
 const DatabaseConnectionPage = () => {
@@ -101,156 +102,155 @@ const DatabaseConnectionPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8">
-            <div className="max-w-2xl mx-auto px-4">
-                <div className="bg-white rounded-lg shadow-md p-6">
-                    <h1 className="text-2xl font-bold text-gray-900 mb-6">
-                        Connect Database
-                    </h1>
-
-                    <div className="space-y-4">
-                        {/* Connection Name */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Connection Name *
-                            </label>
-                            <input
-                                type="text"
-                                name="name"
-                                value={formData.name}
-                                onChange={handleChange}
-                                placeholder="e.g., Production Database"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50/30 to-teal-50/40 flex flex-col">
+            <Navbar />
+            <div className="flex-1 flex items-center justify-center py-8">
+                <div className="max-w-2xl w-full px-6">
+                    {/* Header */}
+                    <div className="flex items-center gap-4 mb-8">
+                        <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-md">
+                            <span className="text-3xl">🗄️</span>
                         </div>
-
-                        {/* Database Type */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Database Type *
-                            </label>
-                            <select
-                                name="dbType"
-                                value={formData.dbType}
-                                onChange={handleChange}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            >
-                                <option value="mysql">MySQL</option>
-                                <option value="postgresql">PostgreSQL</option>
-                            </select>
+                            <h1 className="text-3xl font-bold text-gray-900">Connect Database</h1>
+                            <p className="text-sm text-gray-600">Link MySQL or PostgreSQL for AI analysis</p>
                         </div>
+                    </div>
 
-                        {/* Host and Port */}
-                        <div className="grid grid-cols-2 gap-4">
+                    {/* Form Card */}
+                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+                        <div className="space-y-5">
+                            {/* Connection Name & Type - Side by side */}
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-900 mb-2">
+                                        Connection Name *
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        value={formData.name}
+                                        onChange={handleChange}
+                                        placeholder="Production DB"
+                                        className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all text-sm"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-900 mb-2">
+                                        Database Type *
+                                    </label>
+                                    <select
+                                        name="dbType"
+                                        value={formData.dbType}
+                                        onChange={handleChange}
+                                        className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all text-sm font-medium"
+                                    >
+                                        <option value="mysql">MySQL</option>
+                                        <option value="postgresql">PostgreSQL</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            {/* Host and Port */}
+                            <div className="grid grid-cols-3 gap-4">
+                                <div className="col-span-2">
+                                    <label className="block text-sm font-semibold text-gray-900 mb-2">
+                                        Host *
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="host"
+                                        value={formData.host}
+                                        onChange={handleChange}
+                                        placeholder="localhost"
+                                        className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all text-sm"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-900 mb-2">
+                                        Port *
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name="port"
+                                        value={formData.port}
+                                        onChange={handleChange}
+                                        className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all text-sm"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Database Name */}
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Host *
+                                <label className="block text-sm font-semibold text-gray-900 mb-2">
+                                    Database Name *
                                 </label>
                                 <input
                                     type="text"
-                                    name="host"
-                                    value={formData.host}
+                                    name="database"
+                                    value={formData.database}
                                     onChange={handleChange}
-                                    placeholder="localhost"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    placeholder="my_database"
+                                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all text-sm"
                                 />
                             </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Port *
-                                </label>
-                                <input
-                                    type="number"
-                                    name="port"
-                                    value={formData.port}
-                                    onChange={handleChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                />
+
+                            {/* Username & Password - Side by side */}
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-900 mb-2">
+                                        Username *
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="username"
+                                        value={formData.username}
+                                        onChange={handleChange}
+                                        placeholder="db_user"
+                                        className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all text-sm"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-900 mb-2">
+                                        Password <span className="text-gray-400 font-normal text-xs">(optional)</span>
+                                    </label>
+                                    <input
+                                        type="password"
+                                        name="password"
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        placeholder="••••••••"
+                                        className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all text-sm"
+                                    />
+                                </div>
                             </div>
-                        </div>
 
-                        {/* Database Name */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Database Name *
-                            </label>
-                            <input
-                                type="text"
-                                name="database"
-                                value={formData.database}
-                                onChange={handleChange}
-                                placeholder="my_database"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                        </div>
+                            {/* Buttons */}
+                            <div className="flex gap-3 pt-3">
+                                <button
+                                    onClick={handleTestConnection}
+                                    disabled={testing}
+                                    className="flex-1 px-5 py-2.5 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 hover:border-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
+                                >
+                                    {testing ? 'Testing...' : 'Test Connection'}
+                                </button>
+                                <button
+                                    onClick={handleSaveConnection}
+                                    disabled={saving}
+                                    className="flex-1 px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold rounded-lg hover:from-emerald-700 hover:to-teal-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg transition-all text-sm"
+                                >
+                                    {saving ? 'Saving...' : 'Save & Connect'}
+                                </button>
+                            </div>
 
-                        {/* Username */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Username *
-                            </label>
-                            <input
-                                type="text"
-                                name="username"
-                                value={formData.username}
-                                onChange={handleChange}
-                                placeholder="database_user"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                        </div>
-
-                        {/* Password */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Password <span className="text-gray-400">(optional)</span>
-                            </label>
-                            <input
-                                type="password"
-                                name="password"
-                                value={formData.password}
-                                onChange={handleChange}
-                                placeholder="Leave empty if no password"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                            <p className="text-xs text-gray-500 mt-1">
-                                For local MySQL (XAMPP/WAMP), root often has no password
-                            </p>
-                        </div>
-
-                        {/* Buttons */}
-                        <div className="flex gap-3 pt-4">
                             <button
-                                onClick={handleTestConnection}
-                                disabled={testing}
-                                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                onClick={() => navigate('/dashboard')}
+                                className="w-full px-4 py-2 text-sm text-gray-600 hover:text-gray-800 font-medium transition-colors"
                             >
-                                {testing ? 'Testing...' : 'Test Connection'}
-                            </button>
-                            <button
-                                onClick={handleSaveConnection}
-                                disabled={saving}
-                                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {saving ? 'Saving...' : 'Save & Continue'}
+                                Cancel
                             </button>
                         </div>
-
-                        <button
-                            onClick={() => navigate('/dashboard')}
-                            className="w-full px-4 py-2 text-gray-600 hover:text-gray-800"
-                        >
-                            Cancel
-                        </button>
                     </div>
-                </div>
-
-                {/* Info Box */}
-                <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <h3 className="font-semibold text-blue-900 mb-2">Security Tip</h3>
-                    <p className="text-sm text-blue-800">
-                        For security, we recommend creating a read-only database user for this connection.
-                        This prevents accidental data modifications.
-                    </p>
                 </div>
             </div>
         </div>

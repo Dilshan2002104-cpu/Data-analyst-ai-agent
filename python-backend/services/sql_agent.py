@@ -5,7 +5,7 @@ Generates SQL queries from natural language using Gemini
 
 import logging
 from services.vertex_ai_service import VertexAIService
-from services.sql_service import SQLService
+from services.sql_service import sql_service
 import json
 
 logging.basicConfig(level=logging.INFO)
@@ -16,7 +16,7 @@ class SQLAgent:
     def __init__(self):
         """Initialize SQL Agent"""
         self.vertex_ai = VertexAIService()
-        self.sql_service = SQLService()
+        self.sql_service = sql_service
     
     def _format_schema_for_prompt(self, schema):
         """
@@ -179,6 +179,21 @@ Provide a clear, concise analysis that:
 3. Mentions any notable patterns or trends
 
 If the user asked for a chart, include a JSON chart configuration at the end.
+The JSON must follow this EXACT format:
+```json
+{{
+  "type": "bar", // or line, pie, area
+  "title": "Chart Title",
+  "xAxisKey": "column_name_for_x_axis",
+  "yAxisKey": "column_name_for_y_axis",
+  "data": [
+    // Include the RELEVANT data rows here as an array of objects
+    {{"column_name_for_x_axis": "value", "column_name_for_y_axis": 100}},
+    ...
+  ]
+}}
+```
+Ensure "data" is an Array of objects, not an object.
 
 Analysis:"""
 

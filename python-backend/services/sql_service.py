@@ -204,3 +204,7 @@ class SQLService:
             self.connections[connection_id]['engine'].dispose()
             del self.connections[connection_id]
             logger.info(f"Connection closed: {connection_id}")
+
+
+# Global instance
+sql_service = SQLService()
