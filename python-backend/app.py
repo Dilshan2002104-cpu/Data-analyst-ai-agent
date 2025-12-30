@@ -28,11 +28,13 @@ CORS(app, resources={
 })
 
 # Import and register blueprints
-from routes import health_bp, process_bp, query_bp
+from routes import health_bp, process_bp, query_bp, sql_bp, unified_bp
 
 app.register_blueprint(health_bp)
 app.register_blueprint(process_bp)
 app.register_blueprint(query_bp)
+app.register_blueprint(sql_bp)
+app.register_blueprint(unified_bp)
 
 logger.info("Flask application initialized successfully")
 

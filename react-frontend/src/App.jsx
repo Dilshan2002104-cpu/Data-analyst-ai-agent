@@ -6,6 +6,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import ChatPage from './pages/ChatPage';
+import DatabaseConnectionPage from './pages/DatabaseConnectionPage';
+import UnifiedChatPage from './pages/UnifiedChatPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
@@ -24,10 +26,34 @@ function App() {
               }
             />
             <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <DashboardPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/chat/:datasetId"
               element={
                 <ProtectedRoute>
                   <ChatPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/connect-database"
+              element={
+                <ProtectedRoute>
+                  <DatabaseConnectionPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/unified-chat"
+              element={
+                <ProtectedRoute>
+                  <UnifiedChatPage />
                 </ProtectedRoute>
               }
             />

@@ -44,6 +44,24 @@ const DashboardPage = () => {
                     <FileUpload onUploadComplete={fetchDatasets} />
                 </div>
 
+                {/* Quick Actions */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                    <button
+                        onClick={() => window.location.href = '/connect-database'}
+                        className="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg p-6 hover:from-green-600 hover:to-green-700 transition-all shadow-md"
+                    >
+                        <h3 className="text-lg font-semibold mb-2">🗄️ Connect Database</h3>
+                        <p className="text-sm text-green-50">Connect to MySQL or PostgreSQL</p>
+                    </button>
+                    <button
+                        onClick={() => window.location.href = '/unified-chat'}
+                        className="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg p-6 hover:from-purple-600 hover:to-purple-700 transition-all shadow-md"
+                    >
+                        <h3 className="text-lg font-semibold mb-2">💬 Unified Chat</h3>
+                        <p className="text-sm text-purple-50">Query all your data sources</p>
+                    </button>
+                </div>
+
                 {/* Datasets Grid */}
                 {loading && datasets.length === 0 ? (
                     <div className="flex justify-center py-12">

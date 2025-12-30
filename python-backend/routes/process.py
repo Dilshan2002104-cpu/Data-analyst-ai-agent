@@ -83,6 +83,20 @@ def process_dataset():
             ids=ids
         )
         
+        # Step 7: Register with Context Manager
+        from services import context_manager
+        user_id = data.get('userId', 'default_user')  # Get from request
+        context_manager.register_csv_file(
+            user_id=user_id,
+            dataset_id=dataset_id,
+            filename=file_name,
+            metadata={
+                'rowCount': profile['row_count'],
+                'columnCount': profile['column_count'],
+                'columns': profile['columns']
+            }
+        )
+        
         logger.info(f"Dataset processed successfully: {dataset_id}")
         
         return jsonify({
