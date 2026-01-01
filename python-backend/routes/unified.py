@@ -12,6 +12,7 @@ from services import (
     SQLAgent
 )
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -94,15 +95,68 @@ def unified_query():
             question=question
         )
         
+        # Step 5: Generate report if requested
+        report_path = None
+        report_filename = None
+        if decision.get('generate_report', False):
+            try:
+                from services.report_writer_agent import report_writer_agent
+                from datetime import datetime
+                
+                # Extract chart config if present in analysis
+                chart_config = None
+                analysis_text = merged_results['analysis']
+                
+                # Try to extract JSON chart config from analysis
+                import json
+                import re
+                json_match = re.search(r'```json\s*(\{.*?\})\s*```', analysis_text, re.DOTALL)
+                if json_match:
+                    try:
+                        chart_config = json.loads(json_match.group(1))
+                    except:
+                        pass
+                
+                # Prepare report data
+                report_data = {
+                    'title': f"Data Analysis Report - {datetime.now().strftime('%Y-%m-%d')}",
+                    'user_query': question,
+                    'insights': analysis_text,
+                    'data': merged_results['data'],
+                    'chart_config': chart_config,
+                    'metadata': {
+                        'generated_by': user_id,
+                        'timestamp': datetime.now().isoformat(),
+                        'data_source': ', '.join(merged_results['sourcesUsed'])
+                    }
+                }
+                
+                # Generate report
+                report_path = report_writer_agent.generate_report(report_data)
+                report_filename = os.path.basename(report_path)
+                logger.info(f"Report generated: {report_filename}")
+                
+            except Exception as e:
+                logger.error(f"Error generating report: {str(e)}")
+                # Continue without report if generation fails
+        
         logger.info(f"Query completed. Sources used: {merged_results['sourcesUsed']}")
         
-        return jsonify({
+        response_data = {
             'success': True,
             'answer': merged_results['analysis'],
             'data': merged_results['data'],
             'rowCount': merged_results['rowCount'],
             'sourcesUsed': merged_results['sourcesUsed']
-        }), 200
+        }
+        
+        # Add report info if generated
+        if report_filename:
+            response_data['reportGenerated'] = True
+            response_data['reportFilename'] = report_filename
+            response_data['reportDownloadUrl'] = f"/api/reports/download/{report_filename}"
+        
+        return jsonify(response_data), 200
         
     except Exception as e:
         logger.error(f"Error processing unified query: {str(e)}")

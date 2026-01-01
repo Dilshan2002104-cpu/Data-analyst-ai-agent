@@ -73,6 +73,11 @@ JSON Response:"""
             # Parse JSON
             decision = json.loads(response_text)
             
+            # Check if user wants a report generated
+            report_keywords = ['report', 'pdf', 'document', 'generate report', 'create report', 'download report']
+            generate_report = any(keyword in question.lower() for keyword in report_keywords)
+            decision['generate_report'] = generate_report
+            
             logger.info(f"Source detection result: {decision}")
             
             return decision
@@ -84,13 +89,15 @@ JSON Response:"""
                 return {
                     'sources': ['csv'],
                     'csv_targets': [available_sources['csvFiles'][0]['name']],
-                    'sql_targets': []
+                    'sql_targets': [],
+                    'generate_report': False
                 }
             else:
                 return {
                     'sources': ['sql'],
                     'csv_targets': [],
-                    'sql_targets': [available_sources['sqlDatabases'][0]['name']] if available_sources.get('sqlDatabases') else []
+                    'sql_targets': [available_sources['sqlDatabases'][0]['name']] if available_sources.get('sqlDatabases') else [],
+                    'generate_report': False
                 }
     
     def merge_results(self, csv_results=None, sql_results=None, question=""):

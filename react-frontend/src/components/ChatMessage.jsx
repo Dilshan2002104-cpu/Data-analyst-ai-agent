@@ -1,4 +1,4 @@
-import { User, Bot } from 'lucide-react';
+import { User, Bot, FileText, Download } from 'lucide-react';
 import ChartRenderer from './ChartRenderer';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -102,6 +102,29 @@ const ChatMessage = ({ message }) => {
                         {chartConfig && (
                             <div className="mt-4">
                                 <ChartRenderer config={chartConfig} />
+                            </div>
+                        )}
+
+                        {/* Render Report Download if available */}
+                        {message.reportGenerated && message.reportDownloadUrl && (
+                            <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                                <div className="flex items-center gap-3">
+                                    <div className="flex-shrink-0 w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                                        <FileText className="w-5 h-5 text-white" />
+                                    </div>
+                                    <div className="flex-1">
+                                        <h4 className="font-semibold text-blue-900">PDF Report Generated</h4>
+                                        <p className="text-sm text-blue-700">Your analysis has been compiled into a professional report</p>
+                                    </div>
+                                    <a
+                                        href={`http://localhost:5000${message.reportDownloadUrl}`}
+                                        download={message.reportFilename}
+                                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                    >
+                                        <Download className="w-4 h-4" />
+                                        <span>Download PDF</span>
+                                    </a>
+                                </div>
                             </div>
                         )}
                     </div>

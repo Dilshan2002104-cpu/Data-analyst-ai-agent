@@ -96,6 +96,9 @@ const UnifiedChatPage = () => {
                     content: data.answer,
                     sourcesUsed: data.sourcesUsed,
                     rowCount: data.rowCount,
+                    reportGenerated: data.reportGenerated || false,
+                    reportFilename: data.reportFilename,
+                    reportDownloadUrl: data.reportDownloadUrl,
                     timestamp: new Date()
                 };
                 setMessages(prev => [...prev, aiMessage]);

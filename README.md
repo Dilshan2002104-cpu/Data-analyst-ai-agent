@@ -1,6 +1,6 @@
 # 🤖 Data Analyst AI Agent
 
-An intelligent, multi-agent AI platform that transforms how you interact with data. Ask questions in natural language and get instant insights from CSV files and SQL databases, powered by Google's Vertex AI Gemini 2.0.
+An intelligent, multi-agent AI platform that transforms how you interact with data. Ask questions in natural language and get instant insights from CSV files and SQL databases, complete with visualizations and professional PDF reports—all powered by Google's Vertex AI Gemini 2.0.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Java](https://img.shields.io/badge/Java-21+-orange.svg)
@@ -9,37 +9,43 @@ An intelligent, multi-agent AI platform that transforms how you interact with da
 
 ## ✨ Key Features
 
-### 🧠 Multi-Agent Architecture
+### 🧠 Multi-Agent Architecture (4 Specialized Agents)
 - **Orchestrator Agent**: Intelligently routes queries to the right specialist
 - **CSV Analyst Agent**: Analyzes flat files with Pandas
-- **SQL Agent**: Generates and executes SQL queries for MySQL/PostgreSQL databases
+- **SQL Agent**: Generates and executes SQL queries for MySQL/PostgreSQL
+- **Report Writer Agent**: Compiles insights into professional PDF reports ⭐ NEW
 
 ### 💬 Natural Language Interface
-- Ask questions in plain English
+- Ask questions in plain English—no SQL knowledge required
 - Get AI-generated insights and explanations
 - Automatic chart generation (Bar, Line, Pie, Area)
+- One-click PDF report generation with charts and data tables
 
 ### 📊 Data Visualization
 - Interactive charts powered by Recharts
 - Automatic chart type selection based on query intent
 - Support for time-series, categorical, and comparative visualizations
+- High-quality chart embedding in PDF reports
 
 ### 💾 Multi-Source Data Analysis
 - **CSV/Excel Files**: Upload and analyze spreadsheets
 - **SQL Databases**: Connect to MySQL and PostgreSQL databases
 - **Unified Queries**: Ask questions across multiple data sources
+- **Persistent Connections**: Database connections saved to Firestore
 
 ### 🔐 Enterprise-Grade Security
 - Firebase Authentication with email/password
 - Account-level data isolation
 - Firestore persistence for chat history and connections
 - Secure credential management
+- SQL injection prevention
 
 ### 🎨 Modern UI/UX
 - Clean, responsive design with TailwindCSS
 - Real-time chat interface
 - File upload with drag-and-drop
 - Database connection management
+- Professional report download cards
 
 ## 🏗️ Architecture
 
@@ -62,11 +68,16 @@ An intelligent, multi-agent AI platform that transforms how you interact with da
 │  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐ │
 │  │ Orchestrator │───▶│  CSV Agent   │    │  SQL Agent   │ │
 │  │    Agent     │    │              │    │              │ │
-│  └──────────────┘    └──────────────┘    └──────────────┘ │
-│         │                   │                    │         │
-│         └───────────────────┴────────────────────┘         │
-│                             │                              │
-│                             ▼                              │
+│  └──────┬───────┘    └──────────────┘    └──────────────┘ │
+│         │                                                  │
+│         └──────────────────┐                               │
+│                            ▼                               │
+│                  ┌──────────────────────┐                  │
+│                  │  Report Writer Agent │ ⭐ NEW           │
+│                  │  (PDF Generation)    │                  │
+│                  └──────────────────────┘                  │
+│                            │                               │
+│                            ▼                               │
 │                  ┌──────────────────────┐                  │
 │                  │   Vertex AI Gemini   │                  │
 │                  │   (Gemini 2.0 Flash) │                  │
@@ -88,7 +99,7 @@ An intelligent, multi-agent AI platform that transforms how you interact with da
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/data-analyst-ai-agent.git
+git clone https://github.com/Dilshan2002104-cpu/Data-analyst-ai-agent.git
 cd data-analyst-ai-agent
 ```
 
@@ -203,6 +214,7 @@ Frontend runs on `http://localhost:5173`
    - Execute the query
    - Analyze results
    - Generate visualizations if requested
+   - Create PDF reports if requested
 
 ### Example Queries
 
@@ -212,6 +224,7 @@ Frontend runs on `http://localhost:5173`
 "What are the top 10 customers by revenue?"
 "Show me monthly revenue trends as a line chart"
 "Compare product categories with a pie chart"
+"Analyze sales by region and generate a report" ⭐ NEW
 ```
 
 #### For CSV Files:
@@ -220,6 +233,13 @@ Frontend runs on `http://localhost:5173`
 "Show me the distribution of ages"
 "Find correlations between price and quantity"
 "Summarize the key statistics"
+```
+
+#### Advanced Analysis:
+```
+"Analyze customer purchasing patterns by region and show which regions have the highest average order value"
+"Compare sales performance between January and February. Which products drove the growth?"
+"Provide a comprehensive business intelligence summary with charts and generate a PDF report"
 ```
 
 ## 🛠️ Technology Stack
@@ -239,6 +259,8 @@ Frontend runs on `http://localhost:5173`
 - **Pandas** - Data manipulation
 - **SQLAlchemy** - SQL toolkit
 - **PyMySQL/psycopg2** - Database drivers
+- **ReportLab** - PDF generation ⭐ NEW
+- **Matplotlib** - Chart rendering for PDFs ⭐ NEW
 
 ### Frontend (React)
 - **React 18** - UI library
@@ -272,15 +294,18 @@ data-analyst-ai-agent/
 │   ├── routes/                    # Flask routes
 │   │   ├── csv.py                # CSV upload/query endpoints
 │   │   ├── sql.py                # SQL connection/query endpoints
-│   │   └── unified.py            # Unified query endpoint
+│   │   ├── unified.py            # Unified query endpoint
+│   │   └── reports.py            # Report generation endpoints ⭐ NEW
 │   ├── services/                  # Business logic
 │   │   ├── agent.py              # CSV Analyst Agent
 │   │   ├── sql_agent.py          # SQL Agent
 │   │   ├── orchestrator.py       # Orchestrator Agent
+│   │   ├── report_writer_agent.py # Report Writer Agent ⭐ NEW
 │   │   ├── vertex_ai_service.py  # Vertex AI integration
 │   │   ├── chromadb_service.py   # Vector database
 │   │   ├── firestore_service.py  # Firestore integration
 │   │   └── context_manager.py    # User context management
+│   ├── reports/                   # Generated PDF reports ⭐ NEW
 │   ├── app.py                     # Flask application
 │   └── requirements.txt
 │
@@ -295,7 +320,7 @@ data-analyst-ai-agent/
 │   └── vite.config.js
 │
 ├── MULTI_AGENT_ARCHITECTURE.md    # Architecture documentation
-├── SYSTEM_ARCHITECTURE.md         # System design
+├── test_database_mysql.sql        # Sample test database
 └── README.md
 ```
 
@@ -309,11 +334,13 @@ The system uses an **Orchestrator Pattern** where a central agent coordinates sp
 2. **Orchestrator** analyzes the query and determines:
    - Which data source(s) to use (CSV, SQL, or both)
    - Which specialist agent(s) to invoke
+   - Whether to generate a PDF report
 3. **Specialist Agents** execute their tasks:
    - **CSV Agent**: Generates Python/Pandas code
    - **SQL Agent**: Generates SQL queries
+   - **Report Writer**: Compiles PDF reports ⭐ NEW
 4. **Results** are analyzed and formatted
-5. **Response** includes insights and visualizations
+5. **Response** includes insights, visualizations, and optional PDF download
 
 ### Agent Capabilities
 
@@ -321,6 +348,7 @@ The system uses an **Orchestrator Pattern** where a central agent coordinates sp
 - Natural language understanding
 - Source detection and routing
 - Multi-source query coordination
+- Report generation detection ⭐ NEW
 
 #### CSV Analyst Agent
 - Pandas code generation
@@ -332,6 +360,48 @@ The system uses an **Orchestrator Pattern** where a central agent coordinates sp
 - Schema understanding
 - Join optimization
 - Date formatting (database-specific)
+
+#### Report Writer Agent ⭐ NEW
+- Professional PDF generation with ReportLab
+- Chart embedding via Matplotlib
+- Data table formatting with pagination
+- Executive summary sections
+- Automatic report generation on user request
+
+## 📄 PDF Report Features ⭐ NEW
+
+Generated reports include:
+
+### Title Page
+- Report title
+- User query
+- Generation date and time
+- Data source information
+
+### Executive Summary
+- AI-generated insights
+- Key findings
+- Statistical highlights
+
+### Detailed Analysis
+- Original query
+- Data source details
+- Record count
+
+### Visualizations
+- Charts embedded as high-quality images
+- Proper scaling and formatting
+- Support for bar, line, pie, and area charts
+
+### Data Tables
+- First 20 rows of results
+- Professional table styling
+- Column headers
+- Pagination note if data is truncated
+
+### Footer
+- Page numbers
+- "Generated by Data Analyst AI Agent" branding
 
 ## 🔒 Security Best Practices
 
@@ -361,6 +431,7 @@ This creates a `sales_test_db` with sample data for testing.
 "What are the top selling products?"
 "Show me monthly sales trends"
 "Which customers have the highest order values?"
+"Analyze sales by region and generate a professional report"
 ```
 
 ## 🐛 Troubleshooting
@@ -378,6 +449,9 @@ This creates a `sales_test_db` with sample data for testing.
 
 **Issue**: "Connection not found" error
 - **Solution**: The connection was saved in Firestore but Python backend needs restart to sync.
+
+**Issue**: PDF report not downloading
+- **Solution**: Check `python-backend/reports/` directory or access directly via `/api/reports/download/<filename>`
 
 ## 📝 API Documentation
 
@@ -415,6 +489,11 @@ This creates a `sales_test_db` with sample data for testing.
 #### Unified Interface
 - `POST /api/unified/query` - Unified query endpoint (auto-routes)
 
+#### Reports ⭐ NEW
+- `POST /api/reports/generate` - Generate PDF report
+- `GET /api/reports/download/<filename>` - Download specific report
+- `GET /api/reports/list` - List all available reports
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please follow these steps:
@@ -442,3 +521,5 @@ For questions or support, please open an issue on GitHub.
 ---
 
 **Built with ❤️ using AI-powered development**
+
+⭐ Star this repo if you find it useful!
